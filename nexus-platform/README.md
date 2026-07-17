@@ -6,7 +6,7 @@
 
 <br />
 
-Welcome to the **CLiNt Arena** source code! This platform is a next-generation Security Operations Center (SOC) designed to showcase advanced, real-time stadium analytics, biometric crowd flows, and automated AI threat detection.
+Welcome to the **CLiNt Arena** source code! This platform is a next-generation Security Operations Center (SOC) designed to showcase advanced, real-time stadium analytics , biometric crowd flows, and automated AI threat detection.
 
 Whether you're looking at live crowd densities or dispatching teams for automated perimeter breaches, CLiNt Arena simulates the pulse of a massive, multi-stadium ecosystem in real-time.
 
