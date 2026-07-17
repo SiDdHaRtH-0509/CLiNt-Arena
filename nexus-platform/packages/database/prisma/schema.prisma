@@ -1,0 +1,220 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// USER & ACCESS MANAGEMENT
+// ==========================================
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String
+  firstName     String
+  lastName      String
+  phoneNumber   String?
+  roleId        String
+  role          Role      @relation(fields: [roleId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions      Session[]
+  devices       Device[]
+  notifications Notification[]
+  volunteers    VolunteerProfile?
+  chatHistory   ChatHistory[]
+  incidents     SecurityIncident[] @relation("ReportedBy")
+}
+
+model Role {
+  id          String       @id @default(uuid())
+  name        String       @unique // FAN, VOLUNTEER, SECURITY, ORGANIZER, SUPER_ADMIN
+  permissions Permission[]
+  users       User[]
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  roles       Role[]
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Device {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  fcmToken    String?
+  deviceType  String
+  osVersion   String
+  createdAt   DateTime @default(now())
+}
+
+// ==========================================
+// STADIUM & EVENT MANAGEMENT
+// ==========================================
+
+model Stadium {
+  id          String   @id @default(uuid())
+  name        String
+  location    String
+  capacity    Int
+  createdAt   DateTime @default(now())
+  
+  matches         Match[]
+  seats           Seat[]
+  routes          Route[]
+  vendors         Vendor[]
+  parking         Parking[]
+  crowdMetrics    CrowdMetric[]
+  incidents       SecurityIncident[]
+  emergencyReports EmergencyReport[]
+}
+
+model Match {
+  id          String   @id @default(uuid())
+  stadiumId   String
+  stadium     Stadium  @relation(fields: [stadiumId], references: [id])
+  homeTeamId  String
+  homeTeam    Team     @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeamId  String
+  awayTeam    Team     @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  startTime   DateTime
+  endTime     DateTime?
+  status      String   // SCHEDULED, LIVE, COMPLETED, POSTPONED
+}
+
+model Team {
+  id          String   @id @default(uuid())
+  name        String
+  countryCode String
+  homeMatches Match[]  @relation("HomeTeam")
+  awayMatches Match[]  @relation("AwayTeam")
+}
+
+model Seat {
+  id          String   @id @default(uuid())
+  stadiumId   String
+  stadium     Stadium  @relation(fields: [stadiumId], references: [id])
+  section     String
+  row         String
+  number      String
+  status      String   // AVAILABLE, OCCUPIED, RESERVED
+}
+
+model Route {
+  id          String   @id @default(uuid())
+  stadiumId   String
+  stadium     Stadium  @relation(fields: [stadiumId], references: [id])
+  startPoint  String
+  endPoint    String
+  pathData    Json     // GeoJSON for Mapbox GL
+  accessible  Boolean  @default(true)
+}
+
+model Vendor {
+  id          String   @id @default(uuid())
+  stadiumId   String
+  stadium     Stadium  @relation(fields: [stadiumId], references: [id])
+  name        String
+  type        String   // FOOD, MERCHANDISE, BEVERAGE
+  location    String
+}
+
+model Parking {
+  id          String   @id @default(uuid())
+  stadiumId   String
+  stadium     Stadium  @relation(fields: [stadiumId], references: [id])
+  zone        String
+  totalSpots  Int
+  availableSpots Int
+}
+
+// ==========================================
+// OPERATIONS & INTELLIGENCE
+// ==========================================
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  title       String
+  body        String
+  type        String   // ALERT, INFO, PROMO, EMERGENCY
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model VolunteerProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  assignedZone String
+  shiftStart  DateTime
+  shiftEnd    DateTime
+}
+
+model SecurityIncident {
+  id          String   @id @default(uuid())
+  reportedById String
+  reporter    User     @relation("ReportedBy", fields: [reportedById], references: [id])
+  stadiumId   String
+  stadium     Stadium  @relation(fields: [stadiumId], references: [id])
+  location    String
+  description String
+  severity    String   // LOW, MEDIUM, HIGH, CRITICAL
+  status      String   // OPEN, IN_PROGRESS, RESOLVED
+  createdAt   DateTime @default(now())
+}
+
+model EmergencyReport {
+  id          String   @id @default(uuid())
+  stadiumId   String
+  stadium     Stadium  @relation(fields: [stadiumId], references: [id])
+  location    String
+  type        String   // MEDICAL, FIRE, SECURITY, STRUCTURAL
+  description String
+  resolved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model CrowdMetric {
+  id          String   @id @default(uuid())
+  stadiumId   String
+  stadium     Stadium  @relation(fields: [stadiumId], references: [id])
+  zone        String
+  density     Float    // 0.0 to 1.0
+  flowRate    Int      // People per minute
+  timestamp   DateTime @default(now())
+}
+
+model AiLog {
+  id          String   @id @default(uuid())
+  module      String   // CROWD_ANALYSIS, ASSISTANT, PREDICTOR, TRANSLATOR
+  input       String?
+  output      String?
+  processingTimeMs Int
+  createdAt   DateTime @default(now())
+}
+
+model ChatHistory {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  message     String
+  isAi        Boolean
+  createdAt   DateTime @default(now())
+}

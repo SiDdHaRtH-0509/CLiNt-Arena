@@ -1,0 +1,39 @@
+# Multi-stage production build for Turborepo microservices
+FROM node:20-alpine AS builder
+# Set working directory
+WORKDIR /app
+RUN yarn global add pnpm turbo
+COPY . .
+# Prune the workspace for the specific service (e.g., api-gateway)
+RUN turbo prune --scope=api-gateway --docker
+
+# Installer stage
+FROM node:20-alpine AS installer
+WORKDIR /app
+RUN yarn global add pnpm
+# Copy workspace and lock files
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN pnpm install --frozen-lockfile
+
+# Build the project
+COPY --from=builder /app/out/full/ .
+RUN pnpm turbo run build --filter=api-gateway
+
+# Runner stage
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+# Create unprivileged user for security
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nestjs
+USER nestjs
+
+# Copy built artifacts and modules
+COPY --from=installer /app/services/api-gateway/dist ./dist
+COPY --from=installer /app/node_modules ./node_modules
+
+EXPOSE 3000
+ENV NODE_ENV=production
+
+CMD ["node", "dist/main"]
