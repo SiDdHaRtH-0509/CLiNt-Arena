@@ -44,11 +44,8 @@ export default function DashboardPage() {
 
       {/* Sidebar */}
       <aside className="relative z-20 w-64 border-r border-white/10 bg-black/40 backdrop-blur-3xl flex flex-col shadow-[10px_0_50px_rgba(0,0,0,0.5)]">
-        <div className="h-20 flex items-center px-8 border-b border-white/10">
-          <div className="relative flex items-center justify-center w-4 h-4 mr-4">
-            <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75" />
-            <div className="relative w-2 h-2 bg-red-500 rounded-full" />
-          </div>
+        <div className="h-20 flex items-center px-6 border-b border-white/10 gap-3">
+          <img src="/logo.png" alt="Logo" className="w-8 h-8 drop-shadow-[0_0_10px_rgba(59,130,246,0.6)]" />
           <span className="font-bold tracking-[0.2em] uppercase text-xs text-white/90">CLiNt Arena SOC</span>
         </div>
         

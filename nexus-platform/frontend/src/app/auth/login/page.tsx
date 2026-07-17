@@ -34,7 +34,8 @@ export default function LoginPage() {
       >
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500" />
         
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 flex flex-col items-center">
+          <img src="/logo.png" alt="Logo" className="w-16 h-16 mb-4 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
           <h1 className="text-4xl font-bold tracking-tight mb-2 text-white">Welcome Back</h1>
           <p className="text-white/40 text-sm">Enter your credentials to access the CLiNt Arena SOC.</p>
         </div>

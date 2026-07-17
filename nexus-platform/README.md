@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="frontend/public/soccer.png" alt="CLiNt Arena Logo" width="120" />
+  <img src="frontend/public/logo.png" alt="CLiNt Arena Logo" width="200" />
   <h1>CLiNt Arena SOC</h1>
   <p><strong>The AI-native neural net powering global stadium operations.</strong></p>
 </div>

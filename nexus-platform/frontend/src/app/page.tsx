@@ -102,7 +102,10 @@ export default function Home() {
             </div>
           </motion.div>
           
-          {/* Headline */}
+          {/* Main Headline */}
+          <div className="mb-6 flex justify-center">
+            <img src="/logo.png" alt="CLiNt Arena Logo" className="w-32 md:w-48 h-auto drop-shadow-[0_0_30px_rgba(59,130,246,0.5)]" />
+          </div>
           <motion.h1 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
