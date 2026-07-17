@@ -2,6 +2,7 @@
   <img src="frontend/public/logo.png" alt="CLiNt Arena Logo" width="200" />
   <h1>CLiNt Arena SOC</h1>
   <p><strong>The AI-native neural net powering global stadium operations.</strong></p>
+  <p>🔴 <strong><a href="https://c-li-nt-arena-git-main-siddharth-0509s-projects.vercel.app/">LIVE DEMO AVAILABLE HERE</a></strong> 🔴</p>
 </div>
 
 <br />
